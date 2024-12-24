@@ -195,5 +195,5 @@ def test():
     print(f"Guessed OS: {NA.guess_os(info)}")
 
 
-if __name__ == "__main__":
-    test()
+# if __name__ == "__main__":
+#     test()
