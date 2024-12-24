@@ -49,8 +49,8 @@ class AnalyzeNetwork:
 
         url = "https://api.macvendors.com/"
 
-        response = requests.get(url+mac_address, timeout=3)
-        if not response or response.status_code != 200:
+        response = requests.get(url+mac_address, timeout=5)
+        if not response or str(response.status_code)[0] != "2":
             return "Unknown"
         return response.content.decode()
 
@@ -67,7 +67,7 @@ class AnalyzeNetwork:
                 if eth.dst == mac:
                     if ip:
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
-                            return {"MAC": mac, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":packet["ip"].ttl}
+                            pass
                         else:
                             return {"MAC": mac, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1}
                         
@@ -96,7 +96,7 @@ class AnalyzeNetwork:
                 if ip_pac.dst == ip:
                     if eth and eth.dst!="ff:ff:ff:ff:ff:ff":
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
-                            return {"MAC": eth.dst, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst), "DEFAULT_TTL":packet["ip"].ttl}
+                            pass
                         else:
                             return {"MAC": eth.dst, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst), "DEFAULT_TTL":-1}
                     elif not eth:
@@ -160,40 +160,40 @@ class AnalyzeNetwork:
     def __str__(self):
         return f"NA-{self.path}"
     
-def test():
-    NA = AnalyzeNetwork("/Users/yoav/Documents/Networking/Guess Who/pcap-01.pcapng")
+# def test():
+#     NA = AnalyzeNetwork("/Users/yoav/Documents/Networking/Guess Who/pcap-01.pcapng")
 
-    ##Get The IPs
-    ips = NA.get_ips()
-    print("IPs:")
-    for ip in ips:
-        print(ip)
-    if len(ips) == 0:
-        print("no ips :(")
-    ##
-    ##Get MACs
+#     ##Get The IPs
+#     ips = NA.get_ips()
+#     print("IPs:")
+#     for ip in ips:
+#         print(ip)
+#     if len(ips) == 0:
+#         print("no ips :(")
+#     ##
+#     ##Get MACs
 
-    macs = NA.get_macs()
-    print("MACs:")
-    for mac in macs:
-        print(mac)
-    if len(macs) == 0:
-        print("no macs :(")
-    ##
-    ##Get INFOs
+#     macs = NA.get_macs()
+#     print("MACs:")
+#     for mac in macs:
+#         print(mac)
+#     if len(macs) == 0:
+#         print("no macs :(")
+#     ##
+#     ##Get INFOs
 
-    info = NA.get_info()
-    print("INFOs:")
-    for item in info:
-        print(item)
-    ##
-    ##Get Specific INFOs
+#     info = NA.get_info()
+#     print("INFOs:")
+#     for item in info:
+#         print(item)
+#     ##
+#     ##Get Specific INFOs
 
-    print("Specific INFO:")   
-    info = NA.get_info_by_mac("00:0c:29:1d:1e:8f")
-    print(info)
-    print(f"Guessed OS: {NA.guess_os(info)}")
+#     print("Specific INFO:")   
+#     info = NA.get_info_by_mac("00:50:56:e1:14:d1")
+#     print(info)
+#     print(f"Guessed OS: {NA.guess_os(info)}")
 
 
-# if __name__ == "__main__":
-#     test()
+# # if __name__ == "__main__":
+# #     test()
