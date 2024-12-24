@@ -155,5 +155,5 @@ def test():
     print("Specific INFO:")   
     print(NA.get_info_by_mac("70:0b:4f:02:d3:80"))
 
-if __name__ == "__main__":
-    test()
+# if __name__ == "__main__":
+#     test()
