@@ -68,12 +68,12 @@ class AnalyzeNetwork:
                     if ip:
                         return {"MAC": mac, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac)}
                     else:
-                        return {"MAC": mac, "IP": "unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac)}
+                        return {"MAC": mac, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac)}
                 if eth.src == mac:
                     if ip:
                         return {"MAC": mac, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac)}
                     else:
-                        return {"MAC": mac, "IP": "unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac)}
+                        return {"MAC": mac, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac)}
 
     def get_info_by_ip(self, ip):
         """returns a dict with all information about the device with
@@ -90,12 +90,12 @@ class AnalyzeNetwork:
                     if eth and eth.dst!="ff:ff:ff:ff:ff:ff":
                         return {"MAC": eth.dst, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst)}
                     elif not eth:
-                        return {"MAC": "unknown", "IP": ip, "VENDOR": "unknown"}
+                        return {"MAC": "Unknown", "IP": ip, "VENDOR": "Unknown"}
                 if ip_pac.src == ip:
                     if eth and eth.src!="ff:ff:ff:ff:ff:ff":
                         return {"MAC": eth.src, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src)}
                     elif not eth:
-                        return {"MAC": "unknown", "IP": ip, "VENDOR": "unknown"}
+                        return {"MAC": "Unknown", "IP": ip, "VENDOR": "Unknown"}
     def get_info(self):
         """returns a list of dicts with information about every
         device in the pcap"""
@@ -114,13 +114,13 @@ class AnalyzeNetwork:
                     if ip:
                         info_list.append({"MAC": eth.src, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src)})
                     else:
-                        info_list.append({"MAC": eth.src, "IP": "unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src)})
+                        info_list.append({"MAC": eth.src, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src)})
                     mac_list.append(eth.src)
                 if eth.dst not in mac_list and eth.dst!="ff:ff:ff:ff:ff:ff":
                     if ip:
                         info_list.append({"MAC": eth.dst, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst)})
                     else:
-                        info_list.append({"MAC": eth.dst, "IP": "unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst)})
+                        info_list.append({"MAC": eth.dst, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst)})
                     mac_list.append(eth.dst)
         return info_list
 
@@ -155,5 +155,5 @@ def test():
     print("Specific INFO:")   
     print(NA.get_info_by_mac("70:0b:4f:02:d3:80"))
 
-# if __name__ == "__main__":
-#     test()
+if __name__ == "__main__":
+    test()
