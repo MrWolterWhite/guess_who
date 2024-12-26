@@ -69,18 +69,18 @@ class AnalyzeNetwork:
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
                             pass
                         else:
-                            return {"MAC": mac, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1}
+                            return {"MAC": mac, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
                         
                     else:
-                        return {"MAC": mac, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1}
+                        return {"MAC": mac, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
                 if eth.src == mac:
                     if ip:
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
-                            return {"MAC": mac, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":packet["ip"].ttl}
+                            return {"MAC": mac, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":packet["ip"].ttl, "ICMP_PACKET_LENGTH":int(packet.ip.len)-int(packet.ip.hdr_len)}
                         else:  
-                            return {"MAC": mac, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1}
+                            return {"MAC": mac, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
                     else:
-                        return {"MAC": mac, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1}
+                        return {"MAC": mac, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(mac), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
 
     def get_info_by_ip(self, ip):
         """returns a dict with all information about the device with
@@ -98,17 +98,17 @@ class AnalyzeNetwork:
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
                             pass
                         else:
-                            return {"MAC": eth.dst, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst), "DEFAULT_TTL":-1}
+                            return {"MAC": eth.dst, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
                     elif not eth:
-                        return {"MAC": "Unknown", "IP": ip, "VENDOR": "Unknown", "DEFAULT_TTL":-1}
+                        return {"MAC": "Unknown", "IP": ip, "VENDOR": "Unknown", "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
                 if ip_pac.src == ip:
                     if eth and eth.src!="ff:ff:ff:ff:ff:ff":
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
-                            return {"MAC": eth.src, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":packet["ip"].ttl}
+                            return {"MAC": eth.src, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":packet["ip"].ttl, "ICMP_PACKET_LENGTH":int(packet.ip.len)-int(packet.ip.hdr_len)}
                         else:
-                            return {"MAC": eth.src, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":-1}
+                            return {"MAC": eth.src, "IP": ip, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
                     elif not eth:
-                        return {"MAC": "Unknown", "IP": ip, "VENDOR": "Unknown", "DEFAULT_TTL":-1}
+                        return {"MAC": "Unknown", "IP": ip, "VENDOR": "Unknown", "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1}
     def get_info(self):
         """returns a list of dicts with information about every
         device in the pcap"""
@@ -126,33 +126,37 @@ class AnalyzeNetwork:
                 if eth.src not in mac_list and eth.src!="ff:ff:ff:ff:ff:ff":
                     if ip:
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
-                            info_list.append({"MAC": eth.src, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":packet["ip"].ttl})
+                            info_list.append({"MAC": eth.src, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":packet["ip"].ttl, "ICMP_PACKET_LENGTH":int(packet.ip.len)-int(packet.ip.hdr_len)})
                         else:
-                            info_list.append({"MAC": eth.src, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":-1})
+                            info_list.append({"MAC": eth.src, "IP": ip.src, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1})
                     else:
-                        info_list.append({"MAC": eth.src, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":-1})
+                        info_list.append({"MAC": eth.src, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.src), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1})
                     mac_list.append(eth.src)
                 if eth.dst not in mac_list and eth.dst!="ff:ff:ff:ff:ff:ff":
                     if ip:
                         if 'icmp' in packet and packet['icmp'].type in ["0","8"]:
                             pass
                         else:
-                            info_list.append({"MAC": eth.dst, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst), "DEFAULT_TTL":-1})
+                            info_list.append({"MAC": eth.dst, "IP": ip.dst, "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst), "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1})
                             mac_list.append(eth.dst)
                     else:
-                        info_list.append({"MAC": eth.dst, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst) , "DEFAULT_TTL":-1})
+                        info_list.append({"MAC": eth.dst, "IP": "Unknown", "VENDOR": AnalyzeNetwork.get_vendor_from_mac(eth.dst) , "DEFAULT_TTL":-1, "ICMP_PACKET_LENGTH":-1})
                         mac_list.append(eth.dst)
         return info_list
 
     def guess_os(self, device_info):
         """returns assumed operating system of a device"""
-        if int(device_info["DEFAULT_TTL"]) == 64:
-            return ["MacOS","Linux"]
-        elif int(device_info["DEFAULT_TTL"]) == 128:
-            return ["Windows"]
-        elif int(device_info["DEFAULT_TTL"]) == 255:
-            return ["Network Device", "Unix System"]
+        
+        default_ttl_dict = {64:["MacOS","Linux"], 128:["Windows"], 255:["Network Device", "Unix System"]}
+        
+        if int(device_info["DEFAULT_TTL"]) in default_ttl_dict:
+            return default_ttl_dict[int(device_info["DEFAULT_TTL"])]
         else:
+            #TTL is not default, check the ICMP packet size
+            packet_size_dict = {64:["MacOS","Linux", "Android","RouterOS"], 40:["Windows"], 72:["iOS"]}
+
+            if device_info["ICMP_PACKET_LENGTH"] in packet_size_dict:
+                return packet_size_dict[device_info["ICMP_PACKET_LENGTH"]]
             return ["Unknown"]
         
     def __repr__(self):
@@ -161,7 +165,7 @@ class AnalyzeNetwork:
         return f"NA-{self.path}"
     
 # def test():
-#     NA = AnalyzeNetwork("/Users/yoav/Documents/Networking/Guess Who/pcap-01.pcapng")
+#     NA = AnalyzeNetwork("/Users/yoav/Documents/Networking/Guess Who/pcap-02.pcapng")
 
 #     ##Get The IPs
 #     ips = NA.get_ips()
@@ -190,10 +194,10 @@ class AnalyzeNetwork:
 #     ##Get Specific INFOs
 
 #     print("Specific INFO:")   
-#     info = NA.get_info_by_mac("00:50:56:e1:14:d1")
+#     info = NA.get_info_by_mac("00:0c:29:1d:1e:8f")
 #     print(info)
 #     print(f"Guessed OS: {NA.guess_os(info)}")
 
 
-# # if __name__ == "__main__":
-# #     test()
+# if __name__ == "__main__":
+#     test()
